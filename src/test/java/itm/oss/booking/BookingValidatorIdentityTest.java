@@ -12,29 +12,40 @@ import org.junit.jupiter.api.Test;
 class BookingValidatorIdentityTest {
 
     private static final Room ROOM = new Room("R101", "Study Room", 4, Set.of());
+    private static final LocalTime OPEN_TIME = LocalTime.of(9, 0);
+    private static final LocalTime CLOSE_TIME = LocalTime.of(18, 0);
+    private static final long MAX_DURATION_MINUTES = 120;
 
     @Test
     void acceptsBookingWithMatchingRequiredIdentityValues() {
-        assertDoesNotThrow(() -> BookingValidator.validate(
-                booking("s2026001", "R101"), ROOM, LocalTime.of(9, 0), LocalTime.of(18, 0), 120));
+        assertDoesNotThrow(() -> validate(booking("s2026001", "R101"), ROOM));
     }
 
     @Test
     void rejectsMissingBookingOrRoom() {
-        assertThrows(IllegalArgumentException.class, () -> BookingValidator.validate(
-                null, ROOM, LocalTime.of(9, 0), LocalTime.of(18, 0), 120));
-        assertThrows(IllegalArgumentException.class, () -> BookingValidator.validate(
-                booking("s2026001", "R101"), null, LocalTime.of(9, 0), LocalTime.of(18, 0), 120));
+        assertThrows(IllegalArgumentException.class, () -> validate(null, ROOM));
+        assertThrows(IllegalArgumentException.class, () -> validate(booking("s2026001", "R101"), null));
     }
 
     @Test
-    void rejectsBlankUserOrRoomIdAndMismatchedRoom() {
-        assertThrows(IllegalArgumentException.class, () -> BookingValidator.validate(
-                booking(" ", "R101"), ROOM, LocalTime.of(9, 0), LocalTime.of(18, 0), 120));
-        assertThrows(IllegalArgumentException.class, () -> BookingValidator.validate(
-                booking("s2026001", ""), ROOM, LocalTime.of(9, 0), LocalTime.of(18, 0), 120));
-        assertThrows(IllegalArgumentException.class, () -> BookingValidator.validate(
-                booking("s2026001", "R102"), ROOM, LocalTime.of(9, 0), LocalTime.of(18, 0), 120));
+    void rejectsNullOrBlankUserId() {
+        assertThrows(IllegalArgumentException.class, () -> validate(booking(null, "R101"), ROOM));
+        assertThrows(IllegalArgumentException.class, () -> validate(booking(" ", "R101"), ROOM));
+    }
+
+    @Test
+    void rejectsNullOrBlankRoomId() {
+        assertThrows(IllegalArgumentException.class, () -> validate(booking("s2026001", null), ROOM));
+        assertThrows(IllegalArgumentException.class, () -> validate(booking("s2026001", ""), ROOM));
+    }
+
+    @Test
+    void rejectsRoomIdThatDoesNotMatchSuppliedRoom() {
+        assertThrows(IllegalArgumentException.class, () -> validate(booking("s2026001", "R102"), ROOM));
+    }
+
+    private void validate(Booking booking, Room room) {
+        BookingValidator.validate(booking, room, OPEN_TIME, CLOSE_TIME, MAX_DURATION_MINUTES);
     }
 
     private Booking booking(String userId, String roomId) {
