@@ -17,8 +17,25 @@ public final class BookingValidator {
             LocalTime openTime,
             LocalTime closeTime,
             long maxDurationMinutes) {
-
-        throw new UnsupportedOperationException(
-                "Issue 1: BookingValidator.validate() is not implemented yet");
+                // Validate room capacity and attendees
+                validateAttendees(booking,room);
+                // Validate booking
+                if (booking.getStatus() == null) {
+                    throw new IllegalArgumentException(
+                        "Booking status cannot be null");
+                }
     }
+
+    private static void validateAttendees(
+        Booking booking, Room room) {
+
+            if (booking.getAttendees() <= 0) {
+                throw new IllegalArgumentException("Attendees must be greater than zero");
+            }
+            
+            if (booking.getAttendees() > room.getCapacity()) {
+                throw new IllegalArgumentException(
+                    "Room capacity exceeded");
+                        }
+        }
 }
