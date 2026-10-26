@@ -47,7 +47,7 @@ class BookingValidatorTimeTest {
                 booking(LocalDateTime.of(2026, 10, 2, 8, 59), LocalDateTime.of(2026, 10, 2, 10, 0)),
                 ROOM, LocalTime.of(9, 0), LocalTime.of(18, 0), 120));
         assertThrows(IllegalArgumentException.class, () -> BookingValidator.validate(
-                booking(LocalDateTime.of(2026, 10, 2, 10, 0), LocalDateTime.of(2026, 10, 2, 18, 1)),
+                booking(LocalDateTime.of(2026, 10, 2, 17, 30), LocalDateTime.of(2026, 10, 2, 18, 1)),
                 ROOM, LocalTime.of(9, 0), LocalTime.of(18, 0), 120));
         assertThrows(IllegalArgumentException.class, () -> BookingValidator.validate(
                 normal, ROOM, LocalTime.of(9, 0), LocalTime.of(18, 0), 0));
