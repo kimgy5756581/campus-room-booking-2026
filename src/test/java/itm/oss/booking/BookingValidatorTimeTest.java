@@ -55,6 +55,34 @@ class BookingValidatorTimeTest {
                 normal, ROOM, LocalTime.of(9, 0), LocalTime.of(18, 0), 59));
     }
 
+    @Test
+    void rejectsZeroLengthBooking() {
+        assertThrows(IllegalArgumentException.class, () -> BookingValidator.validate(
+                booking(LocalDateTime.of(2026, 10, 2, 10, 0), LocalDateTime.of(2026, 10, 2, 10, 0)),
+                ROOM, LocalTime.of(9, 0), LocalTime.of(18, 0), 120));
+    }
+
+    @Test
+    void rejectsNullEnd() {
+        assertThrows(IllegalArgumentException.class, () -> BookingValidator.validate(
+                booking(LocalDateTime.of(2026, 10, 2, 10, 0), null),
+                ROOM, LocalTime.of(9, 0), LocalTime.of(18, 0), 120));
+    }
+
+    @Test
+    void rejectsNullOpenTime() {
+        assertThrows(IllegalArgumentException.class, () -> BookingValidator.validate(
+                booking(LocalDateTime.of(2026, 10, 2, 10, 0), LocalDateTime.of(2026, 10, 2, 11, 0)),
+                ROOM, null, LocalTime.of(18, 0), 120));
+    }
+
+    @Test
+    void rejectsNullCloseTime() {
+        assertThrows(IllegalArgumentException.class, () -> BookingValidator.validate(
+                booking(LocalDateTime.of(2026, 10, 2, 10, 0), LocalDateTime.of(2026, 10, 2, 11, 0)),
+                ROOM, LocalTime.of(9, 0), null, 120));
+    }
+
     private Booking booking(LocalDateTime start, LocalDateTime end) {
         return new Booking(1, "s2026001", "R101", start, end, 2, "Study", BookingStatus.ACTIVE);
     }
