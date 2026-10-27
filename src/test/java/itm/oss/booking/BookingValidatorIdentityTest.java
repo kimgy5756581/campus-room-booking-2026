@@ -44,6 +44,11 @@ class BookingValidatorIdentityTest {
         assertThrows(IllegalArgumentException.class, () -> validate(booking("s2026001", "R102"), ROOM));
     }
 
+    @Test
+    void rejectsRoomIdThatDiffersOnlyInCase() {
+        assertThrows(IllegalArgumentException.class, () -> validate(booking("s2026001", "r101"), ROOM));
+    }
+
     private void validate(Booking booking, Room room) {
         BookingValidator.validate(booking, room, OPEN_TIME, CLOSE_TIME, MAX_DURATION_MINUTES);
     }
